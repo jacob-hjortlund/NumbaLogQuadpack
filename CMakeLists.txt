@@ -14,6 +14,7 @@ set(source_files
     src/dqagi.c
     src/dqagp.c
     src/dqags.c
+    src/ldqags.c
     src/dqawc.c
     src/dqawce.c
     src/dqawf.c

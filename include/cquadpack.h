@@ -79,6 +79,8 @@ CQUADPACK_EXPORT double dqagi(dq_function_type f, double bound, int inf, double 
     double epsrel,double *abserr,int *neval,int *ier, void* user_data);
 CQUADPACK_EXPORT double dqags(dq_function_type f, double a, double b, double epsabs,
     double epsrel,double *abserr,int *neval,int *ier, void* user_data);
+CQUADPACK_EXPORT double ldqags(dq_function_type f, double a, double b, double epsabs,
+    double epsrel,double *abserr,int *neval,int *ier, void* user_data);
 CQUADPACK_EXPORT double dqagp(dq_function_type f, double a, double b, int npts2, double *points,
     double epsabs,double epsrel,double *abserr,int *neval,int *ier, void* user_data);
 CQUADPACK_EXPORT double dqng(dq_function_type f, double a, double b, double epsabs, double epsrel,
