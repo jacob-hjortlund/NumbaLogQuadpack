@@ -1,6 +1,6 @@
 #include "cquadpack.h"
 
-double G_K21(dq_function_type f,double a,double b,double *abserr,
+double LG_K21(dq_function_type f,double a,double b,double *abserr,
     double *resabs,double *resasc, void* user_data)
 {
     static double XGK21[11] = {

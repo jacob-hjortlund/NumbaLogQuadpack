@@ -49,6 +49,8 @@ CQUADPACK_EXPORT double G_K15(dq_function_type f,double a,double b,double *abser
     double *resabs, double *resasc, void* user_data);
 CQUADPACK_EXPORT double G_K21(dq_function_type f, double a, double b, double *abserr,
     double *resabs, double *resasc, void* user_data);
+CQUADPACK_EXPORT double LG_K21(dq_function_type f, double a, double b, double *abserr,
+    double *resabs, double *resasc, void* user_data);
 CQUADPACK_EXPORT double G_K31(dq_function_type f, double a, double b, double *abserr,
     double *resabs, double *resasc, void* user_data);
 CQUADPACK_EXPORT double G_K41(dq_function_type f, double a, double b, double *abserr,

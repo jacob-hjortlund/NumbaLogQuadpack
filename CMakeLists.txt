@@ -30,7 +30,8 @@ set(source_files
     src/dqk15.c
     src/dqk15i.c
     src/dqk15w.c
-    src/dqk21.c
+    src/dqk21.c 
+    src/ldqk21.c
     src/dqk31.c
     src/dqk41.c
     src/dqk51.c
