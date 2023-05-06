@@ -86,7 +86,7 @@ CQUADPACK_EXPORT double dqng(dq_function_type f, double a, double b, double epsa
 CQUADPACK_EXPORT double dqag(dq_function_type f, double a, double b, double epsabs, double epsrel,
     int irule,double *abserr,int *neval,int *ier, void* user_data);
 CQUADPACK_EXPORT double ldqag(dq_function_type f, double a, double b, double epsabs, double epsrel,
-    int irule,double *abserr,int *neval,int *ier, void* user_data);
+    double *abserr,int *neval,int *ier, void* user_data);
 CQUADPACK_EXPORT double dqage(dq_function_type f, double a, double b, double epsabs, double epsrel,
     int irule,double *abserr,int *neval,int *ier,int *last, void* user_data);
 CQUADPACK_EXPORT double dqwgtc(double x, double c, double p2, double p3, double p4,
