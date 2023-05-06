@@ -10,11 +10,11 @@ endif()
 
 set(source_files
     src/dqag.c
+    src/ldqag.c
     src/dqage.c
     src/dqagi.c
     src/dqagp.c
     src/dqags.c
-    src/ldqags.c
     src/dqawc.c
     src/dqawce.c
     src/dqawf.c
