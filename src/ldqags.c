@@ -54,18 +54,21 @@ double ldqags(dq_function_type f,double a,double b,double epsabs,
     if ((epsabs < 0.0) && (epsrel < 0.0)) *ier = 6;
     if (*ier == 6) return result;
 
+    const double lepsabs = log(epsabs);
+    const double lepsrel = log(epsrel);
+
 /* First approximation to the integral. */
     ierro = 0;
-    result = G_K21(f,a,b,abserr,&defabs,&resabs, user_data);
+    result = LG_K21(f,a,b,abserr,&defabs,&resabs, user_data);
 
 /* Test on accuracy. */
-    dres = fabs(result);
-    errbnd = max(epsabs,epsrel*dres);
+    dres = result;
+    errbnd = GSL_MAX_DBL(lepsabs,lepsrel + fabs(dres));
     last = 1;
     rlist[0] = result;
     elist[0] = *abserr;
     iord[0] = 0;
-    if ((*abserr <= 100.0 * epmach * defabs) && (*abserr > errbnd))
+    if ((*abserr <= GSL_COERCE_DBL(log(100 * GSL_DBL_EPSILON) + defabs)) && (*abserr > errbnd))
         *ier = 2;
     if (limit == 0) *ier = 1;
     if ((*ier != 0) || ((*abserr <= errbnd) && (*abserr != resabs)) ||
