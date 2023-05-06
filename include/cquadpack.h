@@ -43,11 +43,16 @@ CQUADPACK_EXPORT double logsumexp(double a, double b);
 CQUADPACK_EXPORT double logsubexp(double a, double b);
 #define LOGDIFF(x, y) ((x) < (y) ? logsubexp(y, x) : logsubexp(x, y))
 
+/* Log Integral Error Rescaling*/
+CQUADPACK_EXPORT double rescale_error (double err, const double result_abs, const double result_asc);
+
 /* Integration routines */
 /* Gauss-Kronrod for integration over finite range. */
 CQUADPACK_EXPORT double G_K15(dq_function_type f,double a,double b,double *abserr,
     double *resabs, double *resasc, void* user_data);
 CQUADPACK_EXPORT double G_K21(dq_function_type f, double a, double b, double *abserr,
+    double *resabs, double *resasc, void* user_data);
+CQUADPACK_EXPORT double LG_K21(dq_function_type f, double a, double b, double *abserr,
     double *resabs, double *resasc, void* user_data);
 CQUADPACK_EXPORT double G_K31(dq_function_type f, double a, double b, double *abserr,
     double *resabs, double *resasc, void* user_data);
@@ -73,6 +78,8 @@ CQUADPACK_EXPORT void dqsort(int limit, int last, int *maxerr, double *ermax,
 CQUADPACK_EXPORT double dqagi(dq_function_type f, double bound, int inf, double epsabs,
     double epsrel,double *abserr,int *neval,int *ier, void* user_data);
 CQUADPACK_EXPORT double dqags(dq_function_type f, double a, double b, double epsabs,
+    double epsrel,double *abserr,int *neval,int *ier, void* user_data);
+CQUADPACK_EXPORT double ldqags(dq_function_type f, double a, double b, double epsabs,
     double epsrel,double *abserr,int *neval,int *ier, void* user_data);
 CQUADPACK_EXPORT double dqagp(dq_function_type f, double a, double b, int npts2, double *points,
     double epsabs,double epsrel,double *abserr,int *neval,int *ier, void* user_data);

@@ -14,6 +14,7 @@ set(source_files
     src/dqagi.c
     src/dqagp.c
     src/dqags.c
+    src/ldqags.c
     src/dqawc.c
     src/dqawce.c
     src/dqawf.c
@@ -30,7 +31,8 @@ set(source_files
     src/dqk15.c
     src/dqk15i.c
     src/dqk15w.c
-    src/dqk21.c
+    src/dqk21.c 
+    src/ldqk21.c
     src/dqk31.c
     src/dqk41.c
     src/dqk51.c
@@ -41,6 +43,7 @@ set(source_files
     src/dqwgt.c
     src/logdiff.c
     src/logsum.c
+    src/err.c
 )
 set(header_files
     include/cquadpack.h
