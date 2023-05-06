@@ -43,6 +43,9 @@ CQUADPACK_EXPORT double logsumexp(double a, double b);
 CQUADPACK_EXPORT double logsubexp(double a, double b);
 #define LOGDIFF(x, y) ((x) < (y) ? logsubexp(y, x) : logsubexp(x, y))
 
+/* Log Integral Error Rescaling*/
+CQUADPACK_EXPORT double rescale_error (double err, const double result_abs, const double result_asc);
+
 /* Integration routines */
 /* Gauss-Kronrod for integration over finite range. */
 CQUADPACK_EXPORT double G_K15(dq_function_type f,double a,double b,double *abserr,

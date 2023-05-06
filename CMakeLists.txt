@@ -42,6 +42,7 @@ set(source_files
     src/dqwgt.c
     src/logdiff.c
     src/logsum.c
+    src/err.c
 )
 set(header_files
     include/cquadpack.h
