@@ -43,10 +43,10 @@ double LG_K21(dq_function_type f,double a,double b,double *abserr,
     hlgth = 0.5 * (b - a);
     dhlgth = fabs(hlgth);
 
-    resg = 0.0;
+    resg = -INFINITY;
     fc=(*f)(centr, user_data);
-    resk = fc * WGK21[10];
-    *resabs = fabs(resk);
+    resk = fc + log(WGK21[10]);
+    *resabs = resk;
     for (j = 0; j < 5; j++) {
         jtw = 2 * j + 1;
         absc = hlgth * XGK21[jtw];
@@ -54,10 +54,10 @@ double LG_K21(dq_function_type f,double a,double b,double *abserr,
         fval2 = (*f)(centr+absc, user_data);
         fv1[jtw] = fval1;
         fv2[jtw] = fval2;
-        fsum = fval1 + fval2;
-        resg += WG10[j] * fsum;
-        resk += WGK21[jtw] * fsum;
-        *resabs = *resabs + WGK21[jtw] * (fabs(fval1) + fabs(fval2));
+        fsum = logsumexp(fval1, fval2);
+        resg = logsumexp(resg, log(WG10[j]) + fsum);
+        resk = logsumexp(resk, log(WGK21[jtw]) + fsum);
+        *resabs = logsumexp(*resabs, log(WGK21[jtw]) + fsum);
     }
     for (j = 0; j < 5; j++) {
         jtwm1 = j * 2;
@@ -66,22 +66,19 @@ double LG_K21(dq_function_type f,double a,double b,double *abserr,
         fval2 = (*f)(centr+absc, user_data);
         fv1[jtwm1] = fval1;
         fv2[jtwm1] = fval2;
-        fsum = fval1 + fval2;
-        resk = resk + WGK21[jtwm1] * fsum;
-        *resabs = (*resabs) + WGK21[jtwm1] * (fabs(fval1) + fabs(fval2));
+        fsum = logsumexp(fval1, fval2);
+        resk = logsumexp(resk, log(WGK21[jtwm1]) + fsum);
+        *resabs = logsumexp(*resabs, log(WGK21[jtwm1]) + fsum);
     }
-    reskh = resk * 0.5;
-    *resasc = WGK21[10] * fabs(fc - reskh);
+    reskh = resk + log(0.5);
+    *resasc = log(WGK21[10]) + LOGDIFF(fc, reskh);
     for (j = 0; j < 10; j++ )
-        *resasc = (*resasc) + WGK21[j] * (fabs(fv1[j] - reskh) +
-            fabs(fv2[j] - reskh));
-    result = resk * hlgth;
-    *resabs = (*resabs) * dhlgth;
-    *resasc = (*resasc) * dhlgth;
-    *abserr = fabs((resk - resg) * hlgth);
-    if ((*resasc != 0.0) && (*abserr != 0.0))
-        *abserr = (*resasc) * min(1.0,pow((200.0 * (*abserr)/(*resasc)),1.5));
-    if (*resabs > uflow/(50.0 * epmach))
-        *abserr = max(epmach * 50.0 * (*resabs),(*abserr));
+        *resasc = logsumexp(*resasc, logsumexp(log(WGK21[j]) + LOGDIFF(fv1[j], reskh),
+            LOGDIFF(fv2[j], reskh)));
+    result = resk + log(hlgth);
+    *resabs = (*resabs) + log(dhlgth);
+    *resasc = (*resasc) + log(dhlgth);
+    *abserr = LOGDIFF(resk, resg) + log(dhlgth);
+    *abserr = rescale_error(*abserr, *resabs , *resasc);
     return result;
 }
