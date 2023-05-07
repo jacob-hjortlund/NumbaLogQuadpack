@@ -35,7 +35,7 @@ double ldqag(dq_function_type f,double a,double b,double epsabs,
 
     double area,area1,area2,area12,a1,a2,b1,b2,c,defabs;
     double defab1,defab2,errbnd,errmax,error1,error2;
-    double erro12,errsum,resabs,result;
+    double erro12,errsum,resabs;
     double alist[LIMIT],blist[LIMIT],rlist[LIMIT],elist[LIMIT];
     int iroff1,iroff2,k,keyf,maxerr,nrmax,iord[LIMIT],limit;
 
@@ -61,7 +61,7 @@ double ldqag(dq_function_type f,double a,double b,double epsabs,
 
 /* First approximation to the integral. */
     *neval = 0;
-    result = G_K21(f,a,b,abserr,&defabs,&resabs, user_data);
+    result = LG_K21(f,a,b,abserr,&defabs,&resabs, user_data);
     last = 0;
     rlist[0] = result;
     elist[0] = *abserr;
@@ -69,7 +69,7 @@ double ldqag(dq_function_type f,double a,double b,double epsabs,
 
 /* Test on accuracy. */
     errbnd = GSL_MAX_DBL(lepsabs, lepsrel + fabs(result));
-    if ((*abserr <= GSLC_COERCE_DBL(log(50.0 * epmach) + defabs)) && (*abserr > errbnd))
+    if ((*abserr <= log(50 * epmach) + defabs) && (*abserr > errbnd))
         *ier = 2;
     if (limit == 0) *ier = 1;
     if ((*ier != 0) || ((*abserr <= errbnd) && (*abserr != resabs)) ||
@@ -91,16 +91,16 @@ double ldqag(dq_function_type f,double a,double b,double epsabs,
         b1 = 0.5 * (alist[maxerr] + blist[maxerr]);
         a2 = b1;
         b2 = blist[maxerr];
-        area1 = G_K21(f,a1,b1,&error1,&resabs,&defab1, user_data);
-        area2 = G_K21(f,a2,b2,&error2,&resabs,&defab2, user_data);
+        area1 = LG_K21(f,a1,b1,&error1,&resabs,&defab1, user_data);
+        area2 = LG_K21(f,a2,b2,&error2,&resabs,&defab2, user_data);
 
 /* Improve previous approximations to integral and error,
         and test for accuracy. */
         (*neval) += 1;
         area12 = logsumexp(area1, area2);
         erro12 = logsumexp(error1, error2);
-        errsum = logsubexp(logaddexp(errsum, erro12), errmax);
-        area = logsubexp(logaddexp(area, area12), rlist[maxerr]);
+        errsum = logsubexp(logsumexp(errsum, erro12), errmax);
+        area = logsubexp(logsumexp(area, area12), rlist[maxerr]);
         if ((defab1 != error1) && (defab2 != error2)) {
             double delta = LOGDIFF(rlist[maxerr], area12);
             if ((delta <= log(1.0e-5) + fabs(area12)) &&

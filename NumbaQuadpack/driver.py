@@ -36,7 +36,7 @@ def dqags(funcptr, a, b, data = np.array([0.0], np.float64), epsabs = 1.49e-08, 
     if ier != 0:
         success = False
         
-    return sol, abserr.item(), success
+    return sol, abserr.item(), success, ier.item()
 
 @njit
 def ldqag(funcptr, a, b, data = np.array([0.0], np.float64), epsabs = 1.49e-08, epsrel = 1.49e-08):
@@ -52,4 +52,4 @@ def ldqag(funcptr, a, b, data = np.array([0.0], np.float64), epsabs = 1.49e-08, 
     if ier != 0:
         success = False
         
-    return sol, abserr.item(), success
+    return sol, abserr.item(), success, ier.item()

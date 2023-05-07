@@ -53,6 +53,9 @@ add_library(cquadpack ${source_files} ${header_files})
 message(STATUS "Will compile the library in shared mode")
 set_property(TARGET cquadpack PROPERTY POSITION_INDEPENDENT_CODE 1)
 
+find_package(GSL REQUIRED)    # See below (2)
+target_link_libraries(cquadpack GSL::gsl GSL::gslcblas)
+
 # Add export header
 include(GenerateExportHeader)
 generate_export_header(cquadpack)
