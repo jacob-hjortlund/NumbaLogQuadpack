@@ -10,11 +10,11 @@ endif()
 
 set(source_files
     src/dqag.c
+    src/ldqag.c
     src/dqage.c
     src/dqagi.c
     src/dqagp.c
     src/dqags.c
-    src/ldqags.c
     src/dqawc.c
     src/dqawce.c
     src/dqawf.c
@@ -52,6 +52,9 @@ set(BUILD_SHARED_LIBS ON)
 add_library(cquadpack ${source_files} ${header_files})
 message(STATUS "Will compile the library in shared mode")
 set_property(TARGET cquadpack PROPERTY POSITION_INDEPENDENT_CODE 1)
+
+find_package(GSL REQUIRED)    # See below (2)
+target_link_libraries(cquadpack GSL::gsl GSL::gslcblas)
 
 # Add export header
 include(GenerateExportHeader)
