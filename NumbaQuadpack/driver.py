@@ -15,6 +15,13 @@ dqags_.argtypes = [ct.c_void_p, ct.c_double, ct.c_double, ct.c_double, ct.c_doub
                  ct.c_void_p, ct.c_void_p, ct.c_void_p, ct.c_void_p,]
 dqags_.restype = ct.c_double
 
+ldqags_ = libquadpack.ldqags
+ldqags_.argtypes = [
+    ct.c_void_p, ct.c_double, ct.c_double, ct.c_double, ct.c_double,
+    ct.c_void_p, ct.c_void_p, ct.c_void_p, ct.c_void_p,
+]
+ldqags_.restype = ct.c_double
+
 ldqag_ = libquadpack.ldqag
 ldqag_.argtypes = [
     ct.c_void_p, ct.c_double, ct.c_double, ct.c_double, ct.c_double,
@@ -24,6 +31,22 @@ ldqag_.restype = ct.c_double
 
 @njit
 def dqags(funcptr, a, b, data = np.array([0.0], np.float64), epsabs = 1.49e-08, epsrel = 1.49e-08):
+    abserr = np.array(0.0,np.float64)
+    neval = np.array(0,np.int32)
+    ier = np.array(0,np.int32)
+    
+    sol = dqags_(funcptr, a, b, epsabs, epsrel, \
+                 abserr.ctypes.data, neval.ctypes.data, \
+                 ier.ctypes.data, data.ctypes.data)
+    
+    success = True
+    if ier != 0:
+        success = False
+        
+    return sol, abserr.item(), success, ier.item()
+
+@njit
+def ldqags(funcptr, a, b, data = np.array([0.0], np.float64), epsabs = 1.49e-08, epsrel = 1.49e-08):
     abserr = np.array(0.0,np.float64)
     neval = np.array(0,np.int32)
     ier = np.array(0,np.int32)

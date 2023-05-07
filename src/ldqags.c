@@ -54,22 +54,25 @@ double ldqags(dq_function_type f,double a,double b,double epsabs,
     if ((epsabs < 0.0) && (epsrel < 0.0)) *ier = 6;
     if (*ier == 6) return result;
 
+    const double lepsabs = log(epsabs);
+    const double lepsrel = log(epsrel);
+
 /* First approximation to the integral. */
     ierro = 0;
-    result = G_K21(f,a,b,abserr,&defabs,&resabs, user_data);
+    result = LG_K21(f,a,b,abserr,&defabs,&resabs, user_data);
 
 /* Test on accuracy. */
     dres = fabs(result);
-    errbnd = max(epsabs,epsrel*dres);
+    errbnd = GSL_MAX_DBL(lepsabs, lepsrel + dres);
     last = 1;
     rlist[0] = result;
     elist[0] = *abserr;
     iord[0] = 0;
-    if ((*abserr <= 100.0 * epmach * defabs) && (*abserr > errbnd))
+    if ((*abserr <= log(100.0 * epmach) + defabs) && (*abserr > errbnd))
         *ier = 2;
     if (limit == 0) *ier = 1;
     if ((*ier != 0) || ((*abserr <= errbnd) && (*abserr != resabs)) ||
-        (*abserr == 0.0)) goto _140;
+        (gsl_isinf(*abserr) != -1)) goto _140;
 
 /* Initialization. */
     rlist2[0] = result;
@@ -89,7 +92,7 @@ double ldqags(dq_function_type f,double a,double b,double epsabs,
     iroff2 = 0;
     iroff3 = 0;
     ksgn = -1;
-    if (dres > (1.0 - 50.0 * epmach) * defabs)
+    if (dres > log(1.0 - 50.0 * epmach) + defabs)
         ksgn = 1;
 
 /* Main loop. */
@@ -101,18 +104,18 @@ double ldqags(dq_function_type f,double a,double b,double epsabs,
         a2 = b1;
         b2 = blist[maxerr];
         erlast = errmax;
-        area1 = G_K21(f,a1,b1,&error1,&resabs,&defab1, user_data);
-        area2 = G_K21(f,a2,b2,&error2,&resabs,&defab2, user_data);
+        area1 = LG_K21(f,a1,b1,&error1,&resabs,&defab1, user_data);
+        area2 = LG_K21(f,a2,b2,&error2,&resabs,&defab2, user_data);
 
 /* Improve previous approximation's to integral and error
       and test for accuracy. */
-        area12 = area1 + area2;
-        erro12 = error1 + error2;
-        errsum = errsum + erro12 - errmax;
-        area = area + area12 - rlist[maxerr];
+        area12 = logsumexp(area1, area2);
+        erro12 = logsumexp(error1, error2);
+        errsum = logsubexp(logsumexp(errsum, erro12), errmax);
+        area = logsubexp(logsumexp(area, area12), rlist[maxerr]);
         if ((defab1 == error1) || (defab2 == error2)) goto _15;
-        if ((fabs(rlist[maxerr] - area12) > 1.0e-5 * fabs(area12))
-            || (erro12 < .99 * errmax)) goto _10;
+        if ((LOGDIFF(rlist[maxerr], area12) > log(1.0e-5) + fabs(area12))
+            || (erro12 < log(0.99) + errmax)) goto _10;
         if (extrap) iroff2++;
         else iroff1++;
 _10:
@@ -121,7 +124,7 @@ _10:
 _15:
         rlist[maxerr] = area1;
         rlist[last] = area2;
-        errbnd = max(epsabs,epsrel * fabs(area));
+        errbnd = GSL_MAX_DBL(lepsabs, lepsrel + fabs(area));
 
 /* Test for roundoff error and eventually set error flag. */
         if (((iroff1 + iroff2) >= 10) || (iroff3 >= 20))
@@ -166,9 +169,9 @@ _30:
         if (*ier != 0) goto _100;
         if (last == 1) goto _80;    /* last == 2 */
         if (noext) goto _90;        /* goto 90 */
-        erlarg -= erlast;
+        erlarg = logsubexp(erlarg, erlast);
         if (fabs(b1-a1) > small)
-            erlarg += erro12;
+            erlarg = logsumexp(erlarg,erro12);
         if (extrap) goto _40;
 
 /* Test whether the interval to be bisected next is the smallest interval. */
@@ -200,13 +203,13 @@ _60:
         rlist2[numrl2] = area;
         reseps=dqext(&numrl2,rlist2,&abseps,res3la,&nres);
         ktmin++;
-        if ((ktmin > 5) && (*abserr < 1.0e-3 * errsum)) *ier = 5;
+        if ((ktmin > 5) && (*abserr < log(1.0e-3) + errsum)) *ier = 5;
         if (abseps >= *abserr) goto _70;
         ktmin = 0;
         *abserr = abseps;
         result = reseps;
         correc = erlarg;
-        ertest = max(epsabs,epsrel * fabs(reseps));
+        ertest = GSL_MAX_DBL(lepsabs, lepsrel + fabs(reseps));
         if (*abserr <= ertest) goto _100;
 
 /* Prepare bisection of the smallest interval. */
@@ -250,9 +253,9 @@ _110:
 
 /* Compute global integral. */
 _115:
-    result = 0.0;
+    result = -INFINITY;
     for (k = 0; k <= last; k++)
-        result += rlist[k];
+        result = logsumexp(result, rlist[k]);
     *abserr = errsum;
 _130:
     if (*ier > 2) (*ier)--;
